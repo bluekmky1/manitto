@@ -32,6 +32,8 @@ export default function Inbox() {
   const navigate = useNavigate();
   const { messages, userSession, currentUser } = useLoaderData<typeof loader>();
   const [activeTab, setActiveTab] = useState<"received" | "sent">("received");
+  const [isNavigating, setIsNavigating] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Helper function to format time
   const formatTime = (dateString: string) => {
@@ -68,6 +70,8 @@ export default function Inbox() {
   };
 
   const handleCompose = () => {
+    if (isNavigating) return;
+    setIsNavigating(true);
     navigate("/compose");
   };
 
@@ -95,6 +99,9 @@ export default function Inbox() {
             </div>
           }
           onRightClick={() => {
+            if (isLoggingOut) return;
+            setIsLoggingOut(true);
+            
             // Form 제출을 위한 함수
             const form = document.createElement("form");
             form.method = "POST";
@@ -184,9 +191,11 @@ export default function Inbox() {
         {/* Floating Action Button */}
         <button
           onClick={handleCompose}
+          disabled={isNavigating}
           className="fixed bottom-6 right-6 w-14 h-14 bg-indigo-600 text-white rounded-full shadow-lg 
                    hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 
                    transition-all duration-200 hover:scale-105 active:scale-95
+                   disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100
                    flex items-center justify-center"
         >
           <svg

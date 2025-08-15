@@ -29,7 +29,7 @@ export function NotificationCard({
             </span>
           </div>
 
-          <p className="text-sm text-gray-600 line-clamp-2">{description}</p>
+          <p className="text-sm text-gray-600 whitespace-pre-wrap break-words">{description}</p>
         </div>
       </div>
     </div>

@@ -11,7 +11,7 @@ interface TransformRequest {
 }
 
 const FRIENDLY_TONE_PROMPT =
-  "다음 문장을 자연스럽고 친근한 말투로 변환해주세요: 적당한 이모지 사용, 부드럽고 따뜻한 느낌, 과하지 않게 친근함 표현, 의미는 그대로 유지해주세요.";
+  "다음 문장의 핵심 의미와 내용을 절대 바꾸지 말고, 말투만 살짝 부드럽게 만들어주세요: 기존 문장 구조 유지, 1-2개 이모지만 추가, 내용 추가하거나 해석하지 말 것, 원본과 같은 길이로 유지.";
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -60,8 +60,8 @@ serve(async (req) => {
       );
     }
 
-    // 자연스럽고 친근한 톤으로 변환
-    const systemPrompt = `당신은 마니또 메시지 말투 변환 전문가입니다. 주어진 메시지의 의미를 유지하면서 자연스럽고 친근한 톤으로 변경해주세요. 200자 이내로 답변하고, 원본 메시지의 핵심 의미와 감정은 보존해주세요. 따뜻하고 부드러운 느낌으로, 적당한 이모지와 친근한 표현을 사용해주세요.`;
+    // 의미 보존하며 최소한의 말투 변환
+    const systemPrompt = `당신은 메시지 말투 조정 전문가입니다. 주어진 메시지의 의미, 내용, 길이를 절대 바꾸지 마세요. 오직 말투만 살짝 부드럽게 조정하고 1-2개의 이모지만 추가하세요. 내용을 해석하거나 추가 설명하지 말고, 원본 문장을 거의 그대로 유지하면서 톤만 조금 더 친근하게 만드세요.`;
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -81,8 +81,8 @@ serve(async (req) => {
             content: `${FRIENDLY_TONE_PROMPT}\n\n원본 메시지: "${message}"`,
           },
         ],
-        max_tokens: 150,
-        temperature: 0.8,
+        max_tokens: 100,
+        temperature: 0.3,
       }),
     });
 

@@ -81,10 +81,14 @@ export default function Compose() {
   const navigation = useNavigation();
   const [message, setMessage] = useState("");
   const [showTarget, setShowTarget] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const isSubmitting = navigation.state === "submitting";
 
   const handleBack = () => {
+    if (isNavigating) return;
+    setIsNavigating(true);
     navigate("/inbox");
   };
 
@@ -96,7 +100,8 @@ export default function Compose() {
           <div className="flex items-center">
             <button
               onClick={handleBack}
-              className="p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              disabled={isNavigating || isSubmitting}
+              className="p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <svg
                 className="w-6 h-6"
@@ -119,6 +124,9 @@ export default function Compose() {
 
           <button
             onClick={() => {
+              if (isLoggingOut) return;
+              setIsLoggingOut(true);
+              
               // Form 제출을 위한 함수
               const form = document.createElement("form");
               form.method = "POST";
@@ -133,7 +141,8 @@ export default function Compose() {
               document.body.appendChild(form);
               form.submit();
             }}
-            className="flex items-center space-x-1 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+            disabled={isLoggingOut || isSubmitting}
+            className="flex items-center space-x-1 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg
               className="w-5 h-5"
