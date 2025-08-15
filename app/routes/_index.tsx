@@ -1,13 +1,12 @@
-import type { MetaFunction } from "@remix-run/node";
-import { CommunityView } from "../ui/community/CommunityView";
+import { redirect, type LoaderFunctionArgs } from "@remix-run/node";
+import { getUserCode } from "~/utils/session.server";
 
-export const meta: MetaFunction = () => {
-  return [
-    { title: "Remix App" },
-    { name: "description", content: "Remix App" },
-  ];
-};
-
-export default function Index() {
-  return <CommunityView />;
+export async function loader({ request }: LoaderFunctionArgs) {
+  const userCode = await getUserCode(request);
+  
+  if (userCode) {
+    return redirect("/inbox");
+  }
+  
+  return redirect("/join");
 }
