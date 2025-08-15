@@ -35,8 +35,8 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   // Create user session and redirect to inbox
-  const { userId, roomId, roomCode } = validation.userInfo;
-  return createUserSession(code, roomCode, userId, "/inbox");
+  const { userId, roomId, roomCode, nickname } = validation.userInfo;
+  return createUserSession(code, roomCode, userId, nickname, "/inbox");
 }
 
 export default function Join() {

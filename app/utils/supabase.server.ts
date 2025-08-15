@@ -44,6 +44,7 @@ export interface Message {
   sender_id: string;
   receiver_id: string;
   content: string;
+  original_content: string;
   created_at: string;
 }
 
@@ -165,6 +166,68 @@ export async function getMessagesForUser(userId: string): Promise<{
   }
 }
 
+// Get current user information
+export async function getCurrentUser(userId: string): Promise<User | null> {
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', userId)
+      .eq('is_active', true)
+      .single();
+
+    if (error || !data) {
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error getting current user:', error);
+    return null;
+  }
+}
+
+// Transform message using GPT
+async function transformMessage(originalMessage: string): Promise<{ success: boolean; transformedMessage?: string; error?: string }> {
+  try {
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_ANON_KEY;
+    
+    if (!supabaseUrl || !supabaseKey) {
+      return { success: false, error: 'AI 변환 서비스가 설정되지 않았습니다.' };
+    }
+
+    const response = await fetch(`${supabaseUrl}/functions/v1/transform-message`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${supabaseKey}`,
+      },
+      body: JSON.stringify({
+        message: originalMessage.trim()
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error('Failed to transform message:', response.statusText, errorData);
+      return { success: false, error: 'AI 변환에 실패했습니다. 다시 시도해주세요.' };
+    }
+
+    const data = await response.json();
+    const transformedMessage = data.transformedMessage;
+    
+    if (!transformedMessage) {
+      return { success: false, error: 'AI 변환 결과를 받을 수 없습니다.' };
+    }
+
+    return { success: true, transformedMessage };
+  } catch (error) {
+    console.error('Error transforming message:', error);
+    return { success: false, error: 'AI 변환 중 오류가 발생했습니다.' };
+  }
+}
+
 // Send a message
 export async function sendMessage(
   senderId: string,
@@ -184,13 +247,23 @@ export async function sendMessage(
       return { success: false, error: 'Sender not found' };
     }
 
+    const originalContent = content.trim();
+    
+    // Transform the message using GPT
+    const transformResult = await transformMessage(originalContent);
+    
+    if (!transformResult.success) {
+      return { success: false, error: transformResult.error };
+    }
+
     const { data, error } = await supabase
       .from('messages')
       .insert({
         sender_id: senderId,
         receiver_id: receiverId,
         room_id: senderData.room_id,
-        content: content.trim()
+        content: transformResult.transformedMessage,
+        original_content: originalContent
       })
       .select()
       .single();

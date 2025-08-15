@@ -18,18 +18,23 @@ export interface UserSession {
   userCode: string;
   roomCode: string;
   userId: string;
+  nickname?: string;
 }
 
 export async function createUserSession(
   userCode: string, 
   roomCode: string, 
   userId: string, 
+  nickname: string | undefined,
   redirectTo: string
 ) {
   const session = await storage.getSession();
   session.set("userCode", userCode);
   session.set("roomCode", roomCode);
   session.set("userId", userId);
+  if (nickname) {
+    session.set("nickname", nickname);
+  }
   return redirect(redirectTo, {
     headers: {
       "Set-Cookie": await storage.commitSession(session),
@@ -47,9 +52,10 @@ export async function getUserSession(request: Request): Promise<UserSession | un
   const userCode = session.get("userCode");
   const roomCode = session.get("roomCode");
   const userId = session.get("userId");
+  const nickname = session.get("nickname");
   
   if (userCode && roomCode && userId) {
-    return { userCode, roomCode, userId };
+    return { userCode, roomCode, userId, nickname };
   }
   return undefined;
 }
