@@ -126,7 +126,7 @@ export default function Compose() {
             onClick={() => {
               if (isLoggingOut) return;
               setIsLoggingOut(true);
-              
+
               // Form 제출을 위한 함수
               const form = document.createElement("form");
               form.method = "POST";
@@ -267,8 +267,11 @@ export default function Compose() {
             </h3>
             <ul className="text-sm text-indigo-800 space-y-1">
               <li>• 자신의 이름을 밝히지 않도록 주의하세요</li>
-              <li>• 메시지는 200자까지만 쓸 수 있습니다</li>
+              <li>• 메시지는 최대 200자까지만 쓸 수 있어요</li>
               <li>• AI가 자동으로 재미있고 친근한 말투로 변환해드려요! 😆✨</li>
+              <li>
+                • 주의! 메시지를 너무 짧게 쓰면 이상한 메시지가 될 수 있어요
+              </li>
             </ul>
           </div>
         </div>

@@ -15,6 +15,7 @@ import { json } from "@remix-run/node";
 
 import "normalize.css";
 import "./tailwind.css";
+import { LoadingOverlay } from "~/components";
 
 export const meta: MetaFunction = () => {
   return [
@@ -73,6 +74,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
+        <LoadingOverlay />
         <ScrollRestoration />
         <script
           dangerouslySetInnerHTML={{

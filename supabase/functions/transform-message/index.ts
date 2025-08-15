@@ -11,7 +11,7 @@ interface TransformRequest {
 }
 
 const FRIENDLY_TONE_PROMPT =
-  "다음 문장을 자연스럽고 친근한 말투로 변환해주세요: 의미는 유지하면서 따뜻하고 부드럽게, 이모지 1-2개 정도 사용, 너무 과하지 않게 친근함을 표현해주세요.";
+  "다음 문장을 재미있고 과장된 친근한 말투로 변환해주세요: 의미는 유지하되 더 활기차고 유쾌하게, 이모지 2-4개 사용, 감탄사와 의성어 추가, 오버스럽고 귀여운 말투로 표현해주세요!";
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -60,8 +60,8 @@ serve(async (req) => {
       );
     }
 
-    // 자연스럽고 따뜻한 말투 변환
-    const systemPrompt = `당신은 메시지를 따뜻하고 친근하게 만드는 전문가입니다. 주어진 메시지의 의미는 그대로 유지하면서, 자연스럽고 부드러운 말투로 변환해주세요. 적당한 이모지(1-2개)를 사용하고, 너무 과하지 않으면서도 친근감이 느껴지도록 표현해주세요. 200자 이내로 유지하세요.`;
+    // 과장되고 재미있는 말투 변환
+    const systemPrompt = `당신은 메시지를 재미있고 과장되게 만드는 전문가입니다! 주어진 메시지의 핵심 의미는 유지하되, 더 활기차고 유쾌한 말투로 변환해주세요. 이모지를 풍부하게 사용하고, "와~~", "헉!", "대박!", "ㅋㅋㅋ" 같은 감탄사와 의성어를 넣어서 오버스럽고 귀여운 톤으로 만들어주세요! 200자 이내로 유지하세요.`;
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -70,7 +70,7 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "gpt-3.5-turbo",
+        model: "gpt-4o-mini",
         messages: [
           {
             role: "system",
@@ -81,8 +81,8 @@ serve(async (req) => {
             content: `${FRIENDLY_TONE_PROMPT}\n\n원본 메시지: "${message}"`,
           },
         ],
-        max_tokens: 120,
-        temperature: 0.6,
+        max_tokens: 150,
+        temperature: 0.9,
       }),
     });
 
