@@ -5,13 +5,13 @@ AI 기반 메시지 톤 변환 기능이 있는 마니또 웹 애플리케이션
 ## 기능
 
 - 💌 익명 메시지 전송
-- 🤖 AI 자동 말투 변환 (GPT-3.5 Turbo)
+- 🤖 AI 자동 말투 변환 (gpt-4o-mini)
 
 ## 기술 스택
 
 - **Frontend**: Remix.js, React, TypeScript, Tailwind CSS
 - **Backend**: Supabase (PostgreSQL, Edge Functions)
-- **AI**: OpenAI GPT-4-mini
+- **AI**: OpenAI gpt-4o-mini
 - **Deployment**: Vercel
 
 ## Vercel 배포 가이드
